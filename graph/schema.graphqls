@@ -1,0 +1,158 @@
+type Query{
+    users:[User!]!
+    countries:[Country!]!
+    login(input:LoginUser!):String!
+    auth(input:String!):Int!
+    getUserById(input:ID!):User!
+    getImageSlider:[Game_Slider!]!
+    getGameByTag(input:String!):[Game!]!
+    getGameById(input:String!):Game!
+    getGameImageById(input:String!):[GameImage!]!
+    getGameVideoById(input:String!):GameVideo!
+    getRecommendedRequirement(input:String!):RecommendedRequirement!
+    getMinimumRequirement(input:String!):MinimumRequirement!
+    getMostHelpfulReview(input:String!):[GameReview!]!
+    checkOwnedGame(input:InputOwnedGame!):Boolean!
+    checkWishlist(input:InputWishlist!):Boolean!
+    getCartById(input:String!):[Cart!]!
+}
+
+type Mutation{
+    register(input:InputUser!):User!
+    updatePositiveReview(input:String!):GameReview!
+    updateNegativeReview(input:String!):GameReview!
+    insertReview(input:InputReview!):GameReview!
+    inputWishlist(input:InputWishlist!):Wishlist!
+    deleteWishlist(input:InputWishlist!):Wishlist!
+    inputCart(input:InputCart!):Cart!
+    deleteCartByGameId(input:InputCart!):Cart!
+}
+
+
+input InputUser{
+    name:String!
+    email: String!
+    password: String!
+    country: String!
+}
+
+input LoginUser{
+    email: String!
+    password: String!
+}
+
+type User{
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    country: String!
+    wallet: Float!
+    image: String!
+}
+
+type Country{
+    id: ID!
+    name: String!
+}
+
+type Game{
+    id: ID!
+    name: String!
+    genre: String!
+    price: Int!
+    description: String!
+    tag: String!
+    banner: String!
+    image: String!
+    about: String!
+}
+
+type Game_Slider{
+    id: ID!
+    name: String!
+    image: String!
+}
+
+type GameImage{
+    id:ID!
+    gameid:ID!
+    image:String!
+}
+
+type GameVideo{
+    id:ID!
+    gameid:ID!
+    videolink:String!
+}
+
+type RecommendedRequirement{
+    id: ID!
+    gameid: ID!
+    os : String!
+    processor: String!
+    memory: String!
+    graphics: String!
+    storage: String!
+}
+
+type MinimumRequirement{
+    id: ID!
+    gameid: ID!
+    os : String!
+    processor: String!
+    memory: String!
+    graphics: String!
+    storage: String!
+}
+
+type GameReview{
+    id:ID!
+    game:Game!
+    user:User!
+    description: String!
+    rating: String!
+    positive: Int!
+    negative: Int!
+}
+
+type Wishlist{
+    id:ID!
+    gameid:ID!
+    userid:ID!
+}
+
+input InputReview{
+    gameid:ID!
+    userid:ID!
+    description: String!
+    rating:String!
+}
+
+type OwnedGame{
+    id:ID!
+    game:Game!
+    user:User!
+}
+
+input InputOwnedGame{
+    gameid:ID!
+    userid:ID!
+}
+
+input InputWishlist{
+    gameid:ID!
+    userid:ID!
+}
+
+input InputCart{
+    gameid:ID!
+    userid:ID!
+}
+
+type Cart{
+    gameid:ID!
+    userid:ID!
+    game:Game!
+}
+
