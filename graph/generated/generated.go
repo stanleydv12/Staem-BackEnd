@@ -137,6 +137,7 @@ type ComplexityRoot struct {
 		GetImageSlider            func(childComplexity int) int
 		GetMinimumRequirement     func(childComplexity int, input string) int
 		GetMostHelpfulReview      func(childComplexity int, input string) int
+		GetRecentReview           func(childComplexity int, input string) int
 		GetRecommendedRequirement func(childComplexity int, input string) int
 		GetUserByID               func(childComplexity int, input string) int
 		Login                     func(childComplexity int, input model.LoginUser) int
@@ -205,6 +206,7 @@ type QueryResolver interface {
 	GetRecommendedRequirement(ctx context.Context, input string) (*model.RecommendedRequirement, error)
 	GetMinimumRequirement(ctx context.Context, input string) (*model.MinimumRequirement, error)
 	GetMostHelpfulReview(ctx context.Context, input string) ([]*model.GameReview, error)
+	GetRecentReview(ctx context.Context, input string) ([]*model.GameReview, error)
 	CheckOwnedGame(ctx context.Context, input model.InputOwnedGame) (bool, error)
 	CheckWishlist(ctx context.Context, input model.InputWishlist) (bool, error)
 	GetCartByID(ctx context.Context, input string) ([]*model.Cart, error)
@@ -735,6 +737,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetMostHelpfulReview(childComplexity, args["input"].(string)), true
 
+	case "Query.getRecentReview":
+		if e.complexity.Query.GetRecentReview == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getRecentReview_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetRecentReview(childComplexity, args["input"].(string)), true
+
 	case "Query.getRecommendedRequirement":
 		if e.complexity.Query.GetRecommendedRequirement == nil {
 			break
@@ -975,6 +989,7 @@ var sources = []*ast.Source{
     getRecommendedRequirement(input:String!):RecommendedRequirement!
     getMinimumRequirement(input:String!):MinimumRequirement!
     getMostHelpfulReview(input:String!):[GameReview!]!
+    getRecentReview(input:String!):[GameReview!]!
     checkOwnedGame(input:InputOwnedGame!):Boolean!
     checkWishlist(input:InputWishlist!):Boolean!
     getCartById(input:String!):[Cart!]!
@@ -1398,6 +1413,21 @@ func (ec *executionContext) field_Query_getMinimumRequirement_args(ctx context.C
 }
 
 func (ec *executionContext) field_Query_getMostHelpfulReview_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getRecentReview_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -3740,6 +3770,48 @@ func (ec *executionContext) _Query_getMostHelpfulReview(ctx context.Context, fie
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetMostHelpfulReview(rctx, args["input"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GameReview)
+	fc.Result = res
+	return ec.marshalNGameReview2ᚕᚖgithubᚗcomᚋstanleydv12ᚋgqlgenᚑtodosᚋgraphᚋmodelᚐGameReviewᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getRecentReview(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getRecentReview_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetRecentReview(rctx, args["input"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6544,6 +6616,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getMostHelpfulReview(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getRecentReview":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getRecentReview(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

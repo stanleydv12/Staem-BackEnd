@@ -12,6 +12,7 @@ type Query{
     getRecommendedRequirement(input:String!):RecommendedRequirement!
     getMinimumRequirement(input:String!):MinimumRequirement!
     getMostHelpfulReview(input:String!):[GameReview!]!
+    getRecentReview(input:String!):[GameReview!]!
     checkOwnedGame(input:InputOwnedGame!):Boolean!
     checkWishlist(input:InputWishlist!):Boolean!
     getCartById(input:String!):[Cart!]!

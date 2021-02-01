@@ -244,6 +244,13 @@ func (r *queryResolver) GetMinimumRequirement(ctx context.Context, input string)
 func (r *queryResolver) GetMostHelpfulReview(ctx context.Context, input string) ([]*model.GameReview, error) {
 	var rev []*model.GameReview
 	db := database.GetInstance()
+	db.Where("game_id = ? and positive > 1 ", input).Limit(5).Find(&rev)
+	return rev, nil
+}
+
+func (r *queryResolver) GetRecentReview(ctx context.Context, input string) ([]*model.GameReview, error) {
+	var rev []*model.GameReview
+	db := database.GetInstance()
 	db.Where("game_id = ?", input).Limit(5).Find(&rev)
 	return rev, nil
 }

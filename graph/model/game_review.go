@@ -40,7 +40,7 @@ func init() {
 		UserId:      2,
 		Description: "Ini game yang bagus",
 		Rating:      "Positive",
-		Positive:    1,
+		Positive:    10,
 		Negative:    1,
 	})
 
@@ -49,7 +49,7 @@ func init() {
 		UserId:      2,
 		Description: "Ini game yang kurang bagus",
 		Rating:      "Negative",
-		Positive:    1,
+		Positive:    5,
 		Negative:    1,
 	})
 }
