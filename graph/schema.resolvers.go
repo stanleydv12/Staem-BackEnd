@@ -5,12 +5,11 @@ package graph
 
 import (
 	"context"
-	"strconv"
-
 	"github.com/stanleydv12/gqlgen-todos/database"
 	"github.com/stanleydv12/gqlgen-todos/graph/generated"
 	"github.com/stanleydv12/gqlgen-todos/graph/helper"
 	"github.com/stanleydv12/gqlgen-todos/graph/model"
+	"strconv"
 )
 
 func (r *cartResolver) Game(ctx context.Context, obj *model.Cart) (*model.Game, error) {
@@ -140,6 +139,66 @@ func (r *mutationResolver) DeleteCartByGameID(ctx context.Context, input model.I
 	return temp, nil
 }
 
+func (r *mutationResolver) InsertGame(ctx context.Context, input model.InputGame) (*model.OwnedGame, error) {
+	db := database.GetInstance()
+	var gameid int
+	var userid int
+	gameid, _ = strconv.Atoi(input.Gameid)
+	userid, _ = strconv.Atoi(input.Userid)
+	game := &model.OwnedGame{
+		GameID: gameid,
+		UserID: userid,
+	}
+	db.Create(&game)
+	return game, nil
+}
+
+func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUser) (*model.User, error) {
+	db := database.GetInstance()
+	var id int
+	var wallet float64
+	var name, email, password, country, image string
+	id, _ = strconv.Atoi(input.ID)
+	name = input.Name
+	email = input.Email
+	password = input.Password
+	country = input.Country
+	wallet = input.Wallet
+	image = input.Image
+
+	user := model.User{
+		ID:       int64(id),
+		Name:     name,
+		Email:    email,
+		Password: password,
+		Wallet:   wallet,
+		Image:    image,
+		Country:  country,
+	}
+
+	db.Model(&user).Where("id = ?", user.ID).Updates(user)
+	return &user, nil
+}
+
+func (r *mutationResolver) SavePaymentMethod(ctx context.Context, input model.InputPaymentMethod) (*model.PaymentMethod, error) {
+	db := database.GetInstance()
+	id, _ := strconv.Atoi(input.Userid)
+	payment := model.PaymentMethod{
+		UserID:      id,
+		Card:        input.Card,
+		CardNumber:  input.CardNumber,
+		Date:        input.Date,
+		Name:        input.Name,
+		Address:     input.Address,
+		PostalCode:  input.PostalCode,
+		PhoneNumber: input.PhoneNumber,
+		Country:     input.Country,
+	}
+
+	db.Create(&payment)
+	return &payment, nil
+}
+
 func (r *ownedGameResolver) Game(ctx context.Context, obj *model.OwnedGame) (*model.Game, error) {
 	var game model.Game
 	db := database.GetInstance()
@@ -202,7 +261,9 @@ func (r *queryResolver) GetImageSlider(ctx context.Context) ([]*model.Game_Slide
 func (r *queryResolver) GetGameByTag(ctx context.Context, input string) ([]*model.Game, error) {
 	var games []*model.Game
 	db := database.GetInstance()
-	db.Where("tag = ?", input).Find(&games)
+	if input == "Featured" {
+		db.Order("hours desc").Limit(4).Find(&games)
+	}
 	return games, nil
 }
 
@@ -285,6 +346,21 @@ func (r *queryResolver) GetCartByID(ctx context.Context, input string) ([]*model
 	return temp, nil
 }
 
+func (r *queryResolver) GetWishlists(ctx context.Context, input string) ([]*model.Wishlist, error) {
+	db := database.GetInstance()
+	var temp []*model.Wishlist
+	db.Where("user_id = ?", input).Find(&temp)
+
+	return temp, nil
+}
+
+func (r *wishlistResolver) Game(ctx context.Context, obj *model.Wishlist) (*model.Game, error) {
+	var game model.Game
+	db := database.GetInstance()
+	db.Where("id = ?", obj.GameID).First(&game)
+	return &game, nil
+}
+
 // Cart returns generated.CartResolver implementation.
 func (r *Resolver) Cart() generated.CartResolver { return &cartResolver{r} }
 
@@ -300,8 +376,12 @@ func (r *Resolver) OwnedGame() generated.OwnedGameResolver { return &ownedGameRe
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+// Wishlist returns generated.WishlistResolver implementation.
+func (r *Resolver) Wishlist() generated.WishlistResolver { return &wishlistResolver{r} }
+
 type cartResolver struct{ *Resolver }
 type gameReviewResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type ownedGameResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type wishlistResolver struct{ *Resolver }

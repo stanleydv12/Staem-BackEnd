@@ -1,3 +1,5 @@
+scalar Time
+
 type Query{
     users:[User!]!
     countries:[Country!]!
@@ -16,6 +18,7 @@ type Query{
     checkOwnedGame(input:InputOwnedGame!):Boolean!
     checkWishlist(input:InputWishlist!):Boolean!
     getCartById(input:String!):[Cart!]!
+    getWishlists(input:String!):[Wishlist!]
 }
 
 type Mutation{
@@ -27,6 +30,9 @@ type Mutation{
     deleteWishlist(input:InputWishlist!):Wishlist!
     inputCart(input:InputCart!):Cart!
     deleteCartByGameId(input:InputCart!):Cart!
+    insertGame(input:InputGame!):OwnedGame!
+    updateUser(input:UpdateUser!):User!
+    savePaymentMethod(input:InputPaymentMethod!):PaymentMethod!
 }
 
 
@@ -52,6 +58,16 @@ type User{
     image: String!
 }
 
+input UpdateUser{
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    country: String!
+    wallet: Float!
+    image: String!
+}
+
 type Country{
     id: ID!
     name: String!
@@ -67,6 +83,8 @@ type Game{
     banner: String!
     image: String!
     about: String!
+    mature: String!
+    hours: Int!
 }
 
 type Game_Slider{
@@ -121,6 +139,7 @@ type Wishlist{
     id:ID!
     gameid:ID!
     userid:ID!
+    game: Game!
 }
 
 input InputReview{
@@ -131,7 +150,6 @@ input InputReview{
 }
 
 type OwnedGame{
-    id:ID!
     game:Game!
     user:User!
 }
@@ -157,3 +175,31 @@ type Cart{
     game:Game!
 }
 
+input InputGame{
+    gameid:ID!
+    userid:ID!
+}
+
+type PaymentMethod{
+    userid: ID!
+    card : String!
+    card_number: String!
+    date: Time!
+    name: String!
+    address: String!
+    postal_code: String!
+    phone_number: String!
+    country: String!
+}
+
+input InputPaymentMethod{
+    userid: ID!
+    card : String!
+    card_number: String!
+    date: Time!
+    name: String!
+    address: String!
+    postal_code: String!
+    phone_number: String!
+    country: String!
+}

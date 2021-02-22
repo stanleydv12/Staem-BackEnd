@@ -2,7 +2,16 @@
 
 package model
 
+import (
+	"time"
+)
+
 type InputCart struct {
+	Gameid string `json:"gameid"`
+	Userid string `json:"userid"`
+}
+
+type InputGame struct {
 	Gameid string `json:"gameid"`
 	Userid string `json:"userid"`
 }
@@ -10,6 +19,18 @@ type InputCart struct {
 type InputOwnedGame struct {
 	Gameid string `json:"gameid"`
 	Userid string `json:"userid"`
+}
+
+type InputPaymentMethod struct {
+	Userid      string    `json:"userid"`
+	Card        string    `json:"card"`
+	CardNumber  string    `json:"card_number"`
+	Date        time.Time `json:"date"`
+	Name        string    `json:"name"`
+	Address     string    `json:"address"`
+	PostalCode  string    `json:"postal_code"`
+	PhoneNumber string    `json:"phone_number"`
+	Country     string    `json:"country"`
 }
 
 type InputReview struct {
@@ -34,4 +55,14 @@ type InputWishlist struct {
 type LoginUser struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type UpdateUser struct {
+	ID       string  `json:"id"`
+	Name     string  `json:"name"`
+	Email    string  `json:"email"`
+	Password string  `json:"password"`
+	Country  string  `json:"country"`
+	Wallet   float64 `json:"wallet"`
+	Image    string  `json:"image"`
 }
