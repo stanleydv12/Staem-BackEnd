@@ -1,12 +1,30 @@
 package model
 
-import "github.com/stanleydv12/gqlgen-todos/database"
+import (
+	"github.com/stanleydv12/gqlgen-todos/database"
+)
 
 type OwnedGame struct {
-	GameID        int  `gorm:"primaryKey"`
-	OwnedGameGame Game `gorm:"foreignKey:GameID"`
-	UserID        int  `gorm:"primaryKey"`
-	OwnedGameUser User `gorm:"foreignKey:UserID"`
+	GameID            int  `gorm:"primaryKey"`
+	OwnedGameGame     Game `gorm:"foreignKey:GameID"`
+	UserID            int  `gorm:"primaryKey"`
+	OwnedGameUser     User `gorm:"foreignKey:UserID"`
+	OwnedGameItemGame OwnedGameItem
+}
+
+type OwnedGameItem struct {
+	GameItemID int
+	GameItem   GameItem
+	UserID     int
+	User       User
+}
+
+type OwnedBadge struct {
+	GameID      int
+	GameBadgeID int
+	UserID      int
+	User        User
+	Badges      Badges
 }
 
 func init() {
@@ -14,8 +32,104 @@ func init() {
 	db.DropTableIfExists(&OwnedGame{})
 	db.AutoMigrate(&OwnedGame{})
 
-	//db.Create(&OwnedGame{
-	//	GameID:        1,
-	//	UserID:        1,
-	//})
+	db.Create(&OwnedGame{
+		GameID: 1,
+		UserID: 1,
+	})
+
+	db.Create(&OwnedGame{
+		GameID: 2,
+		UserID: 1,
+	})
+
+	db.Create(&OwnedGame{
+		GameID: 3,
+		UserID: 1,
+	})
+
+	db.Create(&OwnedGame{
+		GameID: 4,
+		UserID: 1,
+	})
+
+	db.Create(&OwnedGame{
+		GameID: 5,
+		UserID: 1,
+	})
+
+	// 2
+
+	db.Create(&OwnedGame{
+		GameID: 1,
+		UserID: 2,
+	})
+
+	db.Create(&OwnedGame{
+		GameID: 2,
+		UserID: 2,
+	})
+
+	db.Create(&OwnedGame{
+		GameID: 3,
+		UserID: 2,
+	})
+
+	db.Create(&OwnedGame{
+		GameID: 4,
+		UserID: 2,
+	})
+
+	db.Create(&OwnedGame{
+		GameID: 5,
+		UserID: 2,
+	})
+
+	seedOwnedGameItem()
+	seedOwnedBadges()
+}
+
+func seedOwnedBadges() {
+	db := database.GetInstance()
+	db.DropTableIfExists(&OwnedBadge{})
+	db.AutoMigrate(&OwnedBadge{})
+
+	db.Create(&OwnedBadge{
+		GameID:      1,
+		GameBadgeID: 1,
+		UserID:      1,
+	})
+
+	db.Create(&OwnedBadge{
+		GameID:      1,
+		GameBadgeID: 2,
+		UserID:      1,
+	})
+
+	db.Create(&OwnedBadge{
+		GameID:      1,
+		GameBadgeID: 3,
+		UserID:      1,
+	})
+}
+
+func seedOwnedGameItem() {
+	db := database.GetInstance()
+	db.DropTableIfExists(&OwnedGameItem{})
+	db.AutoMigrate(&OwnedGameItem{})
+
+	db.Create(&OwnedGameItem{
+		GameItemID: 1,
+		UserID:     1,
+	})
+
+	db.Create(&OwnedGameItem{
+		GameItemID: 1,
+		UserID:     5,
+	})
+
+	db.Create(&OwnedGameItem{
+		GameItemID: 2,
+		UserID:     1,
+	})
+
 }

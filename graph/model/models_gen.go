@@ -6,9 +6,54 @@ import (
 	"time"
 )
 
+type Badge struct {
+	ID     string `json:"id"`
+	GameID string `json:"game_id"`
+	Image  string `json:"image"`
+}
+
+type InputBoughtMarketGameItem struct {
+	UserID     string `json:"user_id"`
+	GameItemID string `json:"game_item_id"`
+	BuyerID    string `json:"buyer_id"`
+}
+
 type InputCart struct {
 	Gameid string `json:"gameid"`
 	Userid string `json:"userid"`
+}
+
+type InputCommunityContent struct {
+	ContentPath        string `json:"content_path"`
+	ContentDescription string `json:"content_description"`
+	ContentType        string `json:"content_type"`
+	Userid             string `json:"userid"`
+	Positive           int    `json:"positive"`
+	Negative           int    `json:"negative"`
+}
+
+type InputCommunityContentReview struct {
+	ContentID string `json:"content_id"`
+	UserID    string `json:"user_id"`
+	Review    string `json:"review"`
+}
+
+type InputCommunityDiscussionDetail struct {
+	GameID            string `json:"game_id"`
+	DiscussionID      string `json:"discussion_id"`
+	UserID            string `json:"user_id"`
+	DiscussionContent string `json:"discussion_content"`
+}
+
+type InputCommunityReviewDetail struct {
+	ReviewID      string `json:"review_id"`
+	ReviewContent string `json:"review_content"`
+	UserID        string `json:"user_id"`
+}
+
+type InputFriendRequest struct {
+	UserID   string `json:"user_id"`
+	FriendID string `json:"friend_id"`
 }
 
 type InputGame struct {
@@ -16,9 +61,44 @@ type InputGame struct {
 	Userid string `json:"userid"`
 }
 
+type InputGetMarketListing struct {
+	UserID     string `json:"user_id"`
+	GameItemID string `json:"game_item_id"`
+}
+
+type InputMarketGameItem struct {
+	UserID     string `json:"user_id"`
+	GameItemID string `json:"game_item_id"`
+	Price      int    `json:"price"`
+	Type       string `json:"type"`
+}
+
+type InputMarketListing struct {
+	UserID     string `json:"user_id"`
+	GameItemID string `json:"game_item_id"`
+	Type       string `json:"type"`
+	Price      int    `json:"price"`
+}
+
+type InputNewGame struct {
+	Name        string `json:"name"`
+	Genre       string `json:"genre"`
+	Price       int    `json:"price"`
+	Description string `json:"description"`
+	Tag         string `json:"tag"`
+	Image       string `json:"image"`
+	About       string `json:"about"`
+	Mature      string `json:"mature"`
+}
+
 type InputOwnedGame struct {
 	Gameid string `json:"gameid"`
 	Userid string `json:"userid"`
+}
+
+type InputOwnedGameItem struct {
+	UserID     string `json:"user_id"`
+	GameItemID string `json:"game_item_id"`
 }
 
 type InputPaymentMethod struct {
@@ -33,11 +113,60 @@ type InputPaymentMethod struct {
 	Country     string    `json:"country"`
 }
 
+type InputProfileComment struct {
+	UserID  string `json:"user_id"`
+	Comment string `json:"comment"`
+}
+
+type InputPromo struct {
+	ID     string `json:"id"`
+	Amount int    `json:"amount"`
+}
+
+type InputRequestReport struct {
+	ReporterID  string `json:"reporter_id"`
+	SuspectedID string `json:"suspected_id"`
+	Reason      string `json:"reason"`
+}
+
 type InputReview struct {
 	Gameid      string `json:"gameid"`
 	Userid      string `json:"userid"`
 	Description string `json:"description"`
 	Rating      string `json:"rating"`
+}
+
+type InputSuspensionList struct {
+	UserID    string `json:"user_id"`
+	Reason    string `json:"reason"`
+	Suspended bool   `json:"suspended"`
+}
+
+type InputTopUpWallet struct {
+	Code   *string `json:"code"`
+	UserID string  `json:"user_id"`
+}
+
+type InputUnsuspensionRequest struct {
+	UserEmail string `json:"user_email"`
+	Reason    string `json:"reason"`
+}
+
+type InputUpdateGame struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Genre       string `json:"genre"`
+	Price       int    `json:"price"`
+	Description string `json:"description"`
+	Tag         string `json:"tag"`
+	Image       string `json:"image"`
+	About       string `json:"about"`
+	Mature      string `json:"mature"`
+}
+
+type InputUpdateUserWallet struct {
+	UserID string  `json:"user_id"`
+	Wallet float64 `json:"wallet"`
 }
 
 type InputUser struct {
@@ -55,6 +184,78 @@ type InputWishlist struct {
 type LoginUser struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type MarketListing struct {
+	UserID     string    `json:"user_id"`
+	User       *User     `json:"user"`
+	GameItemID string    `json:"game_item_id"`
+	GameItem   *GameItem `json:"game_item"`
+	Price      int       `json:"price"`
+	Type       string    `json:"type"`
+}
+
+type MarketTransaction struct {
+	GameItemID string    `json:"game_item_id"`
+	Price      int       `json:"price"`
+	CreatedAt  time.Time `json:"createdAt"`
+}
+
+type Message struct {
+	ID   string `json:"id"`
+	Text string `json:"text"`
+}
+
+type OwnedAvatar struct {
+	UserID string  `json:"user_id"`
+	ItemID string  `json:"item_id"`
+	Item   *Avatar `json:"item"`
+}
+
+type OwnedAvatarBorder struct {
+	UserID string        `json:"user_id"`
+	ItemID string        `json:"item_id"`
+	Item   *AvatarBorder `json:"item"`
+}
+
+type OwnedChatSticker struct {
+	UserID string       `json:"user_id"`
+	ItemID string       `json:"item_id"`
+	Item   *ChatSticker `json:"item"`
+}
+
+type OwnedMiniProfileBackground struct {
+	UserID string                 `json:"user_id"`
+	ItemID string                 `json:"item_id"`
+	Item   *MiniProfileBackground `json:"item"`
+}
+
+type OwnedProfileBackground struct {
+	UserID string             `json:"user_id"`
+	ItemID string             `json:"item_id"`
+	Item   *ProfileBackground `json:"item"`
+}
+
+type ProfilePaginate struct {
+	UserID string `json:"user_id"`
+	Offset int    `json:"offset"`
+}
+
+type UpdateCommunityContentThumbs struct {
+	ContentID string `json:"content_id"`
+	Positive  int    `json:"positive"`
+	Negative  int    `json:"negative"`
+}
+
+type UpdateProfileDetail struct {
+	UserID  string `json:"user_id"`
+	Name    string `json:"name"`
+	Summary string `json:"summary"`
+}
+
+type UpdateProfileItem struct {
+	UserID string `json:"user_id"`
+	Path   string `json:"path"`
 }
 
 type UpdateUser struct {

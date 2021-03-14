@@ -4,6 +4,7 @@ type Query{
     users:[User!]!
     countries:[Country!]!
     login(input:LoginUser!):String!
+    loginAdmin(input:LoginUser!):String!
     auth(input:String!):Int!
     getUserById(input:ID!):User!
     getImageSlider:[Game_Slider!]!
@@ -19,6 +20,47 @@ type Query{
     checkWishlist(input:InputWishlist!):Boolean!
     getCartById(input:String!):[Cart!]!
     getWishlists(input:String!):[Wishlist!]
+    getCommunityContent:[CommunityContent!]!
+    getCommunityReview:[CommunityReview!]!
+    getCommunityContentDetail(content_id:ID!, paginator:Int!):[CommunityContentReview!]!
+    getCommunityReviewDetail(review_id:ID!, paginator:Int!):[CommunityReviewDetail!]!
+    getCommunityDiscussionGame:[Game!]!
+    getCommunityDiscussioDetail(input:ID!):[CommunityDiscussionDetail!]!
+    getProfileComment(input: ID!):[ProfileComment!]!
+    getCommunityDiscussionByID(input: ProfilePaginate!):[CommunityDiscussion!]!
+    getCommunityReviewByID(input: ProfilePaginate!):[CommunityReview!]!
+    getOwnedGames(input: ID!):[OwnedGame!]!
+    getGameItem(input: Int!):[GameItem!]!
+    getGameItemByID(input: ID!): GameItem!
+    getMarketGameItemByID(input: ID!):[MarketGameItem!]!
+    checkOwnedGameItem(input: InputOwnedGameItem!): Boolean!
+    checkFriend(input: InputFriendRequest!): Boolean!
+    checkWallet(input: InputTopUpWallet!): Boolean!
+    getMostRecentGames: [Game!]!
+    getPersonalizedGames: [Game!]!
+    getMarketListing(input: InputGetMarketListing): [MarketListing!]!
+    getGameItemByUserID(input: ID!): [OwnedGameItem!]!
+    getAvatar: [Avatar!]!
+    getAvatarBorder: [AvatarBorder!]!
+    getProfileBackground: [ProfileBackground!]!
+    getMiniProfileBackground: [MiniProfileBackground!]!
+    getChatSticker: [ChatSticker!]!
+    getAllGames(paginator: Int!): [Game!]!
+    getGames:[Game!]!
+    getAllPromo(paginator: Int!): [GamePromo!]!
+    deleteGame(game_id: ID!): Game!
+    deletePromo(promo_id: ID!): GamePromo!
+    getAllUsersPaginate(paginator: Int!):[User!]!
+    getReportRequest: [ReportRequest!]!
+    getUnsuspensionRequest: [UnsuspensionRequest!]!
+    getSuspensionList: [SuspensionList!]!
+    deleteReport(id: ID!): String!
+    getOwnedAvatar(id: ID!): [OwnedAvatar]!
+    getOwnedAvatarBorder(id: ID!): [OwnedAvatarBorder!]!
+    getOwnedProfileBackground(id: ID!): [OwnedProfileBackground!]!
+    getOwnedMiniProfile(id: ID!): [OwnedMiniProfileBackground!]!
+    getOwnedChatSticker(id: ID!): [OwnedChatSticker!]!
+    getOwnedBadges(id: ID!): [OwnedBadge!]!
 }
 
 type Mutation{
@@ -33,8 +75,63 @@ type Mutation{
     insertGame(input:InputGame!):OwnedGame!
     updateUser(input:UpdateUser!):User!
     savePaymentMethod(input:InputPaymentMethod!):PaymentMethod!
+    addCommunityContent(input: InputCommunityContent!):CommunityContent!
+    addCommunityContentReview(input: InputCommunityContentReview!): CommunityContentReview!
+    updateCommunityContentThumbs(input: UpdateCommunityContentThumbs!):CommunityContent!
+    addCommunityReviewDetail(input: InputCommunityReviewDetail!):CommunityReviewDetail!
+    addCommunityDiscussionDetail(input: InputCommunityDiscussionDetail!): CommunityDiscussionDetail!
+    createFriendRequest(input: InputFriendRequest!): FriendRequest!
+    createFriend(input: InputFriendRequest!): Friend!
+    addProfileComment(input: InputProfileComment!): ProfileComment!
+    boughtGameItem(input: InputBoughtMarketGameItem!): OwnedGameItem!
+    soldGameItem(input: InputBoughtMarketGameItem!): OwnedGameItem!
+    addUserWallet(input: InputUpdateUserWallet!): User!
+    reduceUserWallet(input: InputUpdateUserWallet!): User!
+    reducePoint(user_id:ID!, price: Int!): User!
+    addMarketGameItem(input: InputMarketGameItem!): MarketGameItem!
+    ignoreFriend(input: InputFriendRequest!): FriendRequest!
+    declinedFriend(input: InputFriendRequest!): FriendRequest!
+    sendOTP(input: Int!): Int!
+    addMarketList(input: InputMarketListing!): MarketListing!
+    buyItemAtPointShop(user_id:ID!, item_id:ID!, type:String!): String!
+    addNewGame(input: InputNewGame!): Game!
+    updateGame(input: InputUpdateGame!): Game!
+    addNewPromo(input: InputPromo!): GamePromo!
+    updatePromo(input: InputPromo!): GamePromo!
+    createUnsuspensionRequest(input: InputUnsuspensionRequest!): UnsuspensionRequest!
+    createReportRequest(input: InputRequestReport!):ReportRequest!
+    addReported(input: ID!): User!
+    createSuspensionList(input: InputSuspensionList!): String!
+    updateUserProfileDetail(input: UpdateProfileDetail!): String!
+    updateAvatar(input: UpdateProfileItem!): String!
+    updateAvatarBorder(input: UpdateProfileItem!): String!
+    updateMiniProfileBackground(input: UpdateProfileItem!): String!
+    updateProfileBackground(input: UpdateProfileItem!): String!
+    insertChat(msg: String!, friend_id: ID!): String!
+    updateTheme(input: UpdateProfileItem!): String!
+    updateBadges(input: UpdateProfileItem!): String!
 }
 
+input UpdateProfileDetail{
+    user_id: ID!
+    name: String!
+    summary: String!
+}
+
+input UpdateProfileItem{
+    user_id: ID!
+    path: String!
+}
+
+type Subscription{
+    messageAdded(itemID: Int!): String!
+    privateChatAdded(userID: ID!): String!
+}
+
+input InputPromo{
+    id: ID!
+    amount: Int!
+}
 
 input InputUser{
     name:String!
@@ -56,6 +153,50 @@ type User{
     country: String!
     wallet: Float!
     image: String!
+    level: Int!
+    border: String!
+    status: String!
+    summary: String!
+    badge: String!
+    friends: [Friend!]!
+    friend_request: [FriendRequest!]!
+    theme: String!
+    background: String!
+    mini_profile_background: String!
+    notification: Int!
+    point: Int!
+    reported: Int!
+    suspended: Boolean!
+}
+
+type OwnedAvatar{
+    user_id: ID!
+    item_id:ID!
+    item: Avatar! @goField(forceResolver: true)
+}
+
+type OwnedAvatarBorder{
+    user_id: ID!
+    item_id:ID!
+    item: AvatarBorder! @goField(forceResolver: true)
+}
+
+type OwnedProfileBackground{
+    user_id: ID!
+    item_id:ID!
+    item: ProfileBackground!  @goField(forceResolver: true)
+}
+
+type OwnedMiniProfileBackground{
+    user_id: ID!
+    item_id:ID!
+    item: MiniProfileBackground! @goField(forceResolver: true)
+}
+
+type OwnedChatSticker{
+    user_id: ID!
+    item_id:ID!
+    item: ChatSticker!  @goField(forceResolver: true)
 }
 
 input UpdateUser{
@@ -85,6 +226,31 @@ type Game{
     about: String!
     mature: String!
     hours: Int!
+    discussions : [CommunityDiscussion!]!
+    createdAt: Time!
+}
+
+input InputNewGame{
+    name: String!
+    genre: String!
+    price: Int!
+    description: String!
+    tag: String!
+    image: String!
+    about: String!
+    mature: String!
+}
+
+input InputUpdateGame{
+    id: ID!
+    name: String!
+    genre: String!
+    price: Int!
+    description: String!
+    tag: String!
+    image: String!
+    about: String!
+    mature: String!
 }
 
 type Game_Slider{
@@ -103,6 +269,12 @@ type GameVideo{
     id:ID!
     gameid:ID!
     videolink:String!
+}
+
+type GamePromo{
+    game_id: ID!
+    game: Game!  @goField(forceResolver: true)
+    amount: Int!
 }
 
 type RecommendedRequirement{
@@ -150,8 +322,18 @@ input InputReview{
 }
 
 type OwnedGame{
-    game:Game!
-    user:User!
+    game_id: ID!
+    game:Game! @goField(forceResolver: true)
+    user_id: ID!
+    user:User! @goField(forceResolver: true)
+    game_items(currentPage:Int!) : [OwnedGameItem!]!
+}
+
+type OwnedGameItem{
+    game_item_id : ID!
+    game_item : GameItem! @goField(forceResolver: true)
+    user_id: ID!
+    user: User!
 }
 
 input InputOwnedGame{
@@ -203,3 +385,300 @@ input InputPaymentMethod{
     phone_number: String!
     country: String!
 }
+
+type CommunityContent{
+    id: ID!
+    content_path: String!
+    content_description: String!
+    content_type: String!
+    userid: ID!
+    user: User!
+    positive: Int!
+    negative: Int!
+}
+
+input InputCommunityContent{
+    content_path: String!
+    content_description: String!
+    content_type:String!
+    userid:ID!
+    positive: Int!
+    negative: Int!
+}
+
+input UpdateCommunityContentThumbs{
+    content_id : ID!
+    positive: Int!
+    negative: Int!
+}
+
+type CommunityContentReview{
+    content_id : ID!
+    content : CommunityContent! @goField(forceResolver: true)
+    user_id: ID!
+    user : User!
+    review: String!
+}
+
+input InputCommunityContentReview{
+    content_id : ID!
+    user_id: ID!
+    review : String!
+}
+
+type CommunityReview{
+    id : ID!
+    review_content : String!
+    user_id: ID!
+    user : User!
+    rating : String!
+}
+
+type CommunityReviewDetail{
+    review_id : ID!
+    review_content: String!
+    user_id : ID!
+    user : User!
+}
+
+input InputCommunityReviewDetail{
+    review_id : ID!
+    review_content: String!
+    user_id : ID!
+}
+
+type CommunityDiscussion{
+    id: ID!
+    game_id : ID!
+    game : Game!
+    user_id : ID!
+    user : User!
+    discussion_content: String!
+}
+
+type CommunityDiscussionDetail{
+    game_id : ID!
+    discussion_id : ID!
+    user_id : ID!
+    user : User!
+    discussion_content: String!
+}
+
+input InputCommunityDiscussionDetail{
+    game_id : ID!
+    discussion_id : ID!
+    user_id : ID!
+    discussion_content : String!
+}
+
+type Friend {
+    user_id : ID!
+    user : User!
+    friend_id : ID!
+    friend : User!
+}
+
+type FriendRequest {
+    user_id : ID!
+    user : User!
+    friend_id : ID!
+    friend : User!
+}
+
+input InputFriendRequest{
+    user_id : ID!
+    friend_id : ID!
+}
+
+type ProfileComment{
+    user_id : ID!
+    comment : String!
+}
+
+input InputProfileComment{
+    user_id : ID!
+    comment : String!
+}
+
+input ProfilePaginate{
+    user_id: ID!
+    offset: Int!
+}
+
+type GameItem{
+    id: ID!
+    game_id: ID!
+    name : String!
+    game : Game!
+    image: String!
+    transactions : [MarketTransaction!]!
+}
+
+type MarketGameItem{
+    user_id: ID!
+    user: User!
+    game_item_id: ID!
+    game_item: GameItem!
+    price: Int!
+    type: String!
+}
+
+input InputMarketGameItem{
+    user_id: ID!
+    game_item_id: ID!
+    price: Int!
+    type: String!
+}
+
+input InputBoughtMarketGameItem{
+    user_id: ID!
+    game_item_id: ID!
+    buyer_id: ID!
+}
+
+input InputUpdateUserWallet{
+    user_id: ID!
+    wallet : Float!
+}
+
+input InputOwnedGameItem{
+    user_id: ID!
+    game_item_id: ID!
+}
+
+type Message{
+    id: ID!
+    text: String!
+}
+
+type MarketTransaction{
+    game_item_id: ID!
+    price: Int!
+    createdAt: Time!
+}
+
+type WalletCode{
+    code: String!
+    amount: Float!
+}
+
+type MarketListing{
+    user_id: ID!
+    user: User! @goField(forceResolver: true)
+    game_item_id: ID!
+    game_item: GameItem! @goField(forceResolver: true)
+    price: Int!
+    type: String!
+}
+
+input InputTopUpWallet{
+    code: String
+    user_id: ID!
+}
+
+input InputMarketListing{
+    user_id: ID!
+    game_item_id: ID!
+    type: String!
+    price: Int!
+}
+
+input InputGetMarketListing{
+    user_id: ID!
+    game_item_id: ID!
+}
+
+type ProfileBackground{
+    id: ID!
+    path: String!
+    price: Int!
+}
+
+type AvatarBorder{
+    id: ID!
+    path: String!
+    price: Int!
+}
+
+type Avatar{
+    id: ID!
+    path: String!
+    price: Int!
+}
+
+type ChatSticker{
+    id: ID!
+    path: String!
+    price: Int!
+}
+
+type MiniProfileBackground{
+    id: ID!
+    path: String!
+    price: Int!
+}
+
+type UnsuspensionRequest{
+    user_id: ID!
+    reason: String!
+    user:User!  @goField(forceResolver: true)
+}
+
+input InputUnsuspensionRequest{
+    user_email: String!
+    reason: String!
+}
+
+type ReportRequest{
+    id: ID!
+    reporter_id: ID!
+    reporter: User!
+    suspected_id: ID!
+    suspected: User!
+    reason: String!
+}
+
+input InputRequestReport{
+    reporter_id: ID!
+    suspected_id: ID!
+    reason: String!
+}
+
+type SuspensionList{
+    user_id: ID!
+    user:User!  @goField(forceResolver: true)
+    reason: String!
+    suspended: Boolean!
+}
+
+input InputSuspensionList{
+    user_id: ID!
+    reason : String!
+    suspended: Boolean!
+}
+
+type Badge{
+    id: ID!
+    game_id: ID!
+    image: String!
+}
+
+type OwnedBadge{
+    game_id: ID!
+    game_badge_id: ID!
+    badge: Badge!
+    user_id: ID!
+    user: User!
+}
+
+directive @goModel(model: String, models: [String!]) on OBJECT
+    | INPUT_OBJECT
+    | SCALAR
+    | ENUM
+    | INTERFACE
+    | UNION
+
+directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
+    | FIELD_DEFINITION
+
+
