@@ -10,6 +10,8 @@ type OwnedGame struct {
 	UserID            int  `gorm:"primaryKey"`
 	OwnedGameUser     User `gorm:"foreignKey:UserID"`
 	OwnedGameItemGame OwnedGameItem
+	OwnedBadge        OwnedBadge
+	OwnedTradingCard  OwnedTradingCard
 }
 
 type OwnedGameItem struct {
@@ -17,6 +19,14 @@ type OwnedGameItem struct {
 	GameItem   GameItem
 	UserID     int
 	User       User
+}
+
+type OwnedTradingCard struct {
+	GameID        int
+	TradingCardID int
+	UserID        int
+	User          User
+	TradingCard   TradingCard
 }
 
 type OwnedBadge struct {
@@ -86,6 +96,31 @@ func init() {
 
 	seedOwnedGameItem()
 	seedOwnedBadges()
+	seedOwnedCard()
+}
+
+func seedOwnedCard() {
+	db := database.GetInstance()
+	db.DropTableIfExists(&OwnedTradingCard{})
+	db.AutoMigrate(&OwnedTradingCard{})
+
+	db.Create(&OwnedTradingCard{
+		GameID:        1,
+		TradingCardID: 1,
+		UserID:        1,
+	})
+
+	db.Create(&OwnedTradingCard{
+		GameID:        1,
+		TradingCardID: 2,
+		UserID:        1,
+	})
+
+	db.Create(&OwnedTradingCard{
+		GameID:        1,
+		TradingCardID: 3,
+		UserID:        1,
+	})
 }
 
 func seedOwnedBadges() {

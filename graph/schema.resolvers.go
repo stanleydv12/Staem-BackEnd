@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -700,6 +701,12 @@ func (r *mutationResolver) DeclinedFriend(ctx context.Context, input model.Input
 }
 
 func (r *mutationResolver) SendOtp(ctx context.Context, input int) (int, error) {
+	if err := helper.UseCache().Set(ctx, string(input), input, 10*time.Second).Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	cached, _ := helper.UseCache().Get(ctx, string(input)).Result()
+
 	m := gomail.NewMessage()
 	m.SetHeader("From", "sdteherag@gmail.com")
 	m.SetHeader("To", "sdteherag@gmail.com")
@@ -713,7 +720,9 @@ func (r *mutationResolver) SendOtp(ctx context.Context, input int) (int, error) 
 		panic(err)
 	}
 
-	return input, nil
+	cache, _ := strconv.Atoi(cached)
+
+	return cache, nil
 }
 
 func (r *mutationResolver) AddMarketList(ctx context.Context, input model.InputMarketListing) (*model.MarketListing, error) {
@@ -1013,8 +1022,15 @@ func (r *ownedAvatarBorderResolver) Item(ctx context.Context, obj *model.OwnedAv
 	return &item, nil
 }
 
-func (r *ownedBadgeResolver) Badge(ctx context.Context, obj *model.OwnedBadge) (*model.Badge, error) {
-	var badge model.Badge
+func (r *ownedBadgeResolver) Game(ctx context.Context, obj *model.OwnedBadge) (*model.Game, error) {
+	var game model.Game
+	db := database.GetInstance()
+	db.Where("id = ?", obj.GameID).First(&game)
+	return &game, nil
+}
+
+func (r *ownedBadgeResolver) Badge(ctx context.Context, obj *model.OwnedBadge) (*model.Badges, error) {
+	var badge model.Badges
 	db := database.GetInstance()
 	db.Where("id = ?", obj.GameBadgeID).Find(&badge)
 	return &badge, nil
@@ -1067,6 +1083,13 @@ func (r *ownedProfileBackgroundResolver) Item(ctx context.Context, obj *model.Ow
 	db := database.GetInstance()
 	db.Where("id = ?", obj.ItemID).Find(&item)
 	return &item, nil
+}
+
+func (r *ownedTradingCardResolver) Game(ctx context.Context, obj *model.OwnedTradingCard) (*model.Game, error) {
+	var game model.Game
+	db := database.GetInstance()
+	db.Where("id = ?", obj.GameID).First(&game)
+	return &game, nil
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
@@ -1576,6 +1599,20 @@ func (r *queryResolver) GetOwnedBadges(ctx context.Context, id string) ([]*model
 	return badge, nil
 }
 
+func (r *queryResolver) GetBadges(ctx context.Context) ([]*model.Badges, error) {
+	var badges []*model.Badges
+	db := database.GetInstance()
+	db.Find(&badges)
+	return badges, nil
+}
+
+func (r *queryResolver) GetTradingCards(ctx context.Context) ([]*model.TradingCard, error) {
+	var badges []*model.TradingCard
+	db := database.GetInstance()
+	db.Find(&badges)
+	return badges, nil
+}
+
 func (r *reportRequestResolver) Reporter(ctx context.Context, obj *model.ReportRequest) (*model.User, error) {
 	var user model.User
 
@@ -1734,6 +1771,11 @@ func (r *Resolver) OwnedProfileBackground() generated.OwnedProfileBackgroundReso
 	return &ownedProfileBackgroundResolver{r}
 }
 
+// OwnedTradingCard returns generated.OwnedTradingCardResolver implementation.
+func (r *Resolver) OwnedTradingCard() generated.OwnedTradingCardResolver {
+	return &ownedTradingCardResolver{r}
+}
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
@@ -1783,6 +1825,7 @@ type ownedGameResolver struct{ *Resolver }
 type ownedGameItemResolver struct{ *Resolver }
 type ownedMiniProfileBackgroundResolver struct{ *Resolver }
 type ownedProfileBackgroundResolver struct{ *Resolver }
+type ownedTradingCardResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type reportRequestResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }

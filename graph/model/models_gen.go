@@ -6,12 +6,6 @@ import (
 	"time"
 )
 
-type Badge struct {
-	ID     string `json:"id"`
-	GameID string `json:"game_id"`
-	Image  string `json:"image"`
-}
-
 type InputBoughtMarketGameItem struct {
 	UserID     string `json:"user_id"`
 	GameItemID string `json:"game_item_id"`

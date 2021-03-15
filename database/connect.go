@@ -3,6 +3,7 @@ package database
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"os"
 )
 
 const DB_NAME = "staem"
@@ -14,6 +15,9 @@ const DB_PASS = "ShaoLiang12" //password on installation
 var DB *gorm.DB
 
 func connect() (*gorm.DB, error) {
+	if os.Getenv("DATABASE_URL") != "" {
+		return gorm.Open("postgres", os.Getenv("DATABASE_URL"))
+	}
 
 	return gorm.Open("postgres", "host="+DB_HOST+" port="+DB_PORT+" user="+DB_USER+" dbname="+DB_NAME+" password="+DB_PASS+" sslmode=disable")
 }

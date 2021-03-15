@@ -61,6 +61,8 @@ type Query{
     getOwnedMiniProfile(id: ID!): [OwnedMiniProfileBackground!]!
     getOwnedChatSticker(id: ID!): [OwnedChatSticker!]!
     getOwnedBadges(id: ID!): [OwnedBadge!]!
+    getBadges: [Badges!]!
+    getTradingCards: [TradingCard!]!
 }
 
 type Mutation{
@@ -657,7 +659,13 @@ input InputSuspensionList{
     suspended: Boolean!
 }
 
-type Badge{
+type Badges{
+    id: ID!
+    game_id: ID!
+    image: String!
+}
+
+type TradingCard{
     id: ID!
     game_id: ID!
     image: String!
@@ -665,8 +673,18 @@ type Badge{
 
 type OwnedBadge{
     game_id: ID!
+    game: Game!
     game_badge_id: ID!
-    badge: Badge!
+    badge: Badges!
+    user_id: ID!
+    user: User!
+}
+
+type OwnedTradingCard{
+    game_id: ID!
+    game: Game!
+    trading_card_id: ID!
+    trading_card: TradingCard!
     user_id: ID!
     user: User!
 }
