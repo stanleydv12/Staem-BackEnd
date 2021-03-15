@@ -1,5 +1,6 @@
 module github.com/stanleydv12/gqlgen-todos
 
+// +heroku goVersion go1.15
 go 1.15
 
 require (
