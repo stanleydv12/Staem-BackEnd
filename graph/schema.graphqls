@@ -26,7 +26,7 @@ type Query{
     getCommunityReviewDetail(review_id:ID!, paginator:Int!):[CommunityReviewDetail!]!
     getCommunityDiscussionGame:[Game!]!
     getCommunityDiscussioDetail(input:ID!):[CommunityDiscussionDetail!]!
-    getProfileComment(input: ID!):[ProfileComment!]!
+    getProfileComment(id:ID!, paginator:Int!):[ProfileComment!]!
     getCommunityDiscussionByID(input: ProfilePaginate!):[CommunityDiscussion!]!
     getCommunityReviewByID(input: ProfilePaginate!):[CommunityReview!]!
     getOwnedGames(input: ID!):[OwnedGame!]!

@@ -465,7 +465,7 @@ type ComplexityRoot struct {
 		GetOwnedProfileBackground   func(childComplexity int, id string) int
 		GetPersonalizedGames        func(childComplexity int) int
 		GetProfileBackground        func(childComplexity int) int
-		GetProfileComment           func(childComplexity int, input string) int
+		GetProfileComment           func(childComplexity int, id string, paginator int) int
 		GetRecentReview             func(childComplexity int, input string) int
 		GetRecommendedRequirement   func(childComplexity int, input string) int
 		GetReportRequest            func(childComplexity int) int
@@ -726,7 +726,7 @@ type QueryResolver interface {
 	GetCommunityReviewDetail(ctx context.Context, reviewID string, paginator int) ([]*model.CommunityReviewDetail, error)
 	GetCommunityDiscussionGame(ctx context.Context) ([]*model.Game, error)
 	GetCommunityDiscussioDetail(ctx context.Context, input string) ([]*model.CommunityDiscussionDetail, error)
-	GetProfileComment(ctx context.Context, input string) ([]*model.ProfileComment, error)
+	GetProfileComment(ctx context.Context, id string, paginator int) ([]*model.ProfileComment, error)
 	GetCommunityDiscussionByID(ctx context.Context, input model.ProfilePaginate) ([]*model.CommunityDiscussion, error)
 	GetCommunityReviewByID(ctx context.Context, input model.ProfilePaginate) ([]*model.CommunityReview, error)
 	GetOwnedGames(ctx context.Context, input string) ([]*model.OwnedGame, error)
@@ -3110,7 +3110,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetProfileComment(childComplexity, args["input"].(string)), true
+		return e.complexity.Query.GetProfileComment(childComplexity, args["id"].(string), args["paginator"].(int)), true
 
 	case "Query.getRecentReview":
 		if e.complexity.Query.GetRecentReview == nil {
@@ -3702,7 +3702,7 @@ type Query{
     getCommunityReviewDetail(review_id:ID!, paginator:Int!):[CommunityReviewDetail!]!
     getCommunityDiscussionGame:[Game!]!
     getCommunityDiscussioDetail(input:ID!):[CommunityDiscussionDetail!]!
-    getProfileComment(input: ID!):[ProfileComment!]!
+    getProfileComment(id:ID!, paginator:Int!):[ProfileComment!]!
     getCommunityDiscussionByID(input: ProfilePaginate!):[CommunityDiscussion!]!
     getCommunityReviewByID(input: ProfilePaginate!):[CommunityReview!]!
     getOwnedGames(input: ID!):[OwnedGame!]!
@@ -5702,14 +5702,23 @@ func (ec *executionContext) field_Query_getProfileComment_args(ctx context.Conte
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["id"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["paginator"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paginator"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["paginator"] = arg1
 	return args, nil
 }
 
@@ -14895,7 +14904,7 @@ func (ec *executionContext) _Query_getProfileComment(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetProfileComment(rctx, args["input"].(string))
+		return ec.resolvers.Query().GetProfileComment(rctx, args["id"].(string), args["paginator"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

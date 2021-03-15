@@ -1300,10 +1300,10 @@ func (r *queryResolver) GetCommunityDiscussioDetail(ctx context.Context, input s
 	return detail, nil
 }
 
-func (r *queryResolver) GetProfileComment(ctx context.Context, input string) ([]*model.ProfileComment, error) {
+func (r *queryResolver) GetProfileComment(ctx context.Context, id string, paginator int) ([]*model.ProfileComment, error) {
 	var comment []*model.ProfileComment
 	db := database.GetInstance()
-	db.Where("user_id = ?", input).Find(&comment)
+	db.Scopes(helper.Paginate(paginator)).Where("user_id = ?", id).Find(&comment)
 	return comment, nil
 }
 
@@ -1366,9 +1366,9 @@ func (r *queryResolver) CheckOwnedGameItem(ctx context.Context, input model.Inpu
 
 func (r *queryResolver) CheckFriend(ctx context.Context, input model.InputFriendRequest) (bool, error) {
 	db := database.GetInstance()
-	var temp model.FriendRequest
+	var temp model.Friend
 	var temp1 model.Friend
-	result := db.Where("friend_id = ? and user_id = ?", input.FriendID, input.UserID).First(&temp)
+	result := db.Where("friend_id = ? and user_id = ?", input.UserID, input.FriendID).First(&temp)
 	result1 := db.Where("friend_id = ? and user_id = ?", input.FriendID, input.UserID).First(&temp1)
 
 	if result.RowsAffected == 0 && result1.RowsAffected == 0 {
